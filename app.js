@@ -641,7 +641,7 @@ async function sendMessage() {
             contents: contentsPayload,
             generationConfig: {
                 temperature: state.settings.temperature,
-                maxOutputTokens: 100,
+                maxOutputTokens: 1000,
                 topK: 40,
                 topP: 0.95
             }
