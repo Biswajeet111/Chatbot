@@ -1,0 +1,5 @@
+Have build a chatbot using Gemini API using html css and javascript with some extra features :
+1. chat history
+2. create new chat
+3. clear chat history
+4. export chat history
