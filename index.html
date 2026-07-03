@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini AI Chatbot</title>
+    <!-- Style link -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Prism.js Tomorrow Night Theme for Code Styling -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i data-lucide="bot"></i>
+                    <span>Gemini Chat</span>
+                </div>
+                <button class="close-sidebar-btn" id="closeSidebarBtn" aria-label="Close Sidebar">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            
+            <button class="new-chat-btn" id="newChatBtn">
+                <i data-lucide="plus"></i>
+                <span>New Chat</span>
+            </button>
+            
+            <div class="chat-history-container" id="chatHistory">
+                <div class="history-section-title">Recent Chats</div>
+                <!-- History items will be dynamically injected here -->
+            </div>
+            
+            <div class="sidebar-footer">
+                <button class="sidebar-footer-btn" id="clearAllBtn">
+                    <i data-lucide="trash-2"></i>
+                    <span>Clear All Chats</span>
+                </button>
+                <button class="sidebar-footer-btn" id="settingsBtn">
+                    <i data-lucide="settings"></i>
+                    <span>Settings</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Chat Area -->
+        <main class="main-content">
+            <!-- Chat Header -->
+            <header class="chat-header">
+                <div class="header-left">
+                    <button class="sidebar-toggle-btn" id="sidebarToggleBtn" aria-label="Toggle Sidebar">
+                        <i data-lucide="menu"></i>
+                    </button>
+                    <div class="chat-info">
+                        <div class="current-chat-title" id="chatTitle">New Conversation</div>
+                        <div class="model-badge">
+                            <i data-lucide="sparkles"></i>
+                            <span id="headerModelName">Gemini 2.5 Flash</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <button class="header-btn" id="exportChatBtn">
+                        <i data-lucide="download"></i>
+                        <span>Export</span>
+                    </button>
+                    <button class="header-btn" id="clearCurrentBtn">
+                        <i data-lucide="trash"></i>
+                        <span>Clear</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Messages Area -->
+            <div class="messages-container" id="messagesContainer">
+                <!-- Welcome Screen (Shown if chat history is empty) -->
+                <div class="welcome-screen" id="welcomeScreen">
+                    <div class="welcome-logo-glow">
+                        <i data-lucide="bot"></i>
+                    </div>
+                    <div class="welcome-text">
+                        <h1>How can I help you today?</h1>
+                        <p>Ask anything, write code, translate texts, or brainstorm ideas. Enter your Gemini API key in settings to start.</p>
+                    </div>
+                    <div class="suggested-prompts-grid">
+                        <div class="suggested-card" data-prompt="Explain quantum computing in simple terms.">
+                            <i data-lucide="cpu" class="suggested-card-icon"></i>
+                            <h3>Explain concepts</h3>
+                            <p>Explain quantum computing like I'm 5 years old.</p>
+                        </div>
+                        <div class="suggested-card" data-prompt="Write a Python script to scan a folder and organize files based on extensions.">
+                            <i data-lucide="code-2" class="suggested-card-icon"></i>
+                            <h3>Write code</h3>
+                            <p>Write a script to automate directory cleaning.</p>
+                        </div>
+                        <div class="suggested-card" data-prompt="Draft a polite email asking a client for feedback on the latest project deliverable.">
+                            <i data-lucide="mail" class="suggested-card-icon"></i>
+                            <h3>Draft emails</h3>
+                            <p>Request feedback on design deliverables.</p>
+                        </div>
+                        <div class="suggested-card" data-prompt="Give me 5 unique, creative ideas for a weekend coding project.">
+                            <i data-lucide="lightbulb" class="suggested-card-icon"></i>
+                            <h3>Brainstorm ideas</h3>
+                            <p>Creative coding projects for the weekend.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="input-panel">
+                <div class="input-container-wrapper">
+                    <div class="input-bar">
+                        <textarea class="input-textarea" id="chatInput" placeholder="Message Gemini..." rows="1"></textarea>
+                        <button class="input-btn mic-btn" id="micBtn" title="Voice Input">
+                            <i data-lucide="mic"></i>
+                        </button>
+                        <button class="input-btn send-btn" id="sendBtn" disabled title="Send Message">
+                            <i data-lucide="arrow-up"></i>
+                        </button>
+                    </div>
+                    <div class="input-hint">
+                        Gemini may display inaccurate info, including about people, so double-check its responses.
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2>Chatbot Settings</h2>
+                <button class="modal-close-btn" id="closeSettingsBtn">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- API Key -->
+                <div class="form-group">
+                    <label for="apiKeyInput">Gemini API Key</label>
+                    <div class="input-wrapper-helper">
+                        <input type="password" id="apiKeyInput" class="form-control" placeholder="AIzaSy...">
+                        <button class="toggle-password-btn" id="toggleApiKeyVisibility" type="button" title="Toggle visibility">
+                            <i data-lucide="eye"></i>
+                        </button>
+                    </div>
+                    <div class="settings-help-text">
+                        Don't have a key? Get one from the <a href="https://aistudio.google.com/" target="_blank" style="color: var(--accent); text-decoration: none;">Google AI Studio</a>.
+                    </div>
+                </div>
+
+                <!-- Model -->
+                <div class="form-group">
+                    <label for="modelSelect">Gemini Model</label>
+                    <select id="modelSelect" class="form-control">
+                        <option value="gemini-2.5-flash" selected>Gemini 2.5 Flash (Recommended)</option>
+                        <option value="gemini-2.5-pro">Gemini 2.5 Pro (Reasoning)</option>
+                        <option value="gemini-1.5-flash">Gemini 1.5 Flash (Legacy)</option>
+                        <option value="gemini-1.5-pro">Gemini 1.5 Pro (Legacy)</option>
+                    </select>
+                    <div class="settings-help-text">
+                        2.5 Flash is ideal for fast responses, while 2.5 Pro excels at complex reasoning and code generation.
+                    </div>
+                </div>
+
+                <!-- System Instructions -->
+                <div class="form-group">
+                    <label for="systemInstructions">System Instructions</label>
+                    <textarea id="systemInstructions" class="form-control" placeholder="You are a helpful and intelligent AI assistant..."></textarea>
+                    <div class="settings-help-text">
+                        Custom instructions to guide chatbot behavior, tone, and persona.
+                    </div>
+                </div>
+
+                <!-- Temperature -->
+                <div class="form-group">
+                    <label for="temperatureSlider">Temperature</label>
+                    <div class="range-slider-container">
+                        <input type="range" id="temperatureSlider" class="range-slider" min="0" max="2" step="0.1" value="0.7">
+                        <span class="range-val" id="temperatureVal">0.7</span>
+                    </div>
+                    <div class="settings-help-text">
+                        Higher values (e.g. 1.2) produce more creative and diverse responses, lower values (e.g. 0.2) are more focused and deterministic.
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelSettingsBtn">Cancel</button>
+                <button class="btn btn-primary" id="saveSettingsBtn">Save Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <i id="toastIcon" data-lucide="check-circle-2"></i>
+        <span id="toastMessage">Settings saved successfully</span>
+    </div>
+
+    <!-- Markdown Parser (Marked.js) -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <!-- Code Syntax Highlighter (Prism.js) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+
+    <!-- App Script -->
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
